@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 public class CategoryDTO {
     private Long categoryId;
     @NotBlank
-    @Size(min=5, message = "Category name should contain at-least 5 characters")
+    @Size(min=5, message = "Category name should contain at least 5 characters")
     private String categoryName;
 }

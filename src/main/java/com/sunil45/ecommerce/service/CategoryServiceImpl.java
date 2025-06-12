@@ -30,9 +30,6 @@ public class CategoryServiceImpl implements CategoryService {
         Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
         Page<Category> categoryPage = categoryRepository.findAll(pageable);
         List<Category> categories = categoryPage.getContent();
-        if (categories.isEmpty()) {
-            throw new ApiRequestException("No categories found");
-        }
         List<CategoryDTO> categoryDTOList = categories.stream().map(category -> modelMapper.map(category, CategoryDTO.class)).toList();
         return new CategoryResponseDTO(categoryDTOList, categoryPage.getNumber(), categoryPage.getSize(), categoryPage.getTotalPages(), categoryPage.getTotalElements(), categoryPage.isLast());
     }
@@ -44,30 +41,26 @@ public class CategoryServiceImpl implements CategoryService {
         if (dbCategory != null) {
             throw new ApiRequestException("Category with name " + category.getCategoryName() + " already exists");
         }
-        categoryRepository.save(category);
-        return modelMapper.map(category, CategoryDTO.class);
+        Category savedCategory = categoryRepository.save(category);
+        return modelMapper.map(savedCategory, CategoryDTO.class);
     }
 
     @Override
     public CategoryDTO deleteCategory(Long categoryId) {
-        Category category = categoryRepository.findById(categoryId).orElse(null);
-        if (category == null) {
-            throw new ApiRequestException("Category with id " + categoryId + " does not exist");
-        }
+        Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new ApiRequestException("Category with id " + categoryId + " not found"));
         categoryRepository.delete(category);
         return modelMapper.map(category, CategoryDTO.class);
     }
 
     @Override
     public CategoryDTO updateCategory(Long categoryId, CategoryDTO categoryDTO) {
-        Category category = modelMapper.map(categoryDTO, Category.class);
         Category dbCategory = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ApiRequestException("Category with id " + categoryId + " does not exist"));
-        Category dupCategory = categoryRepository.findByCategoryName(category.getCategoryName());
-        if (dupCategory != null) {
-            throw new ApiRequestException("Category with name " + category.getCategoryName() + " already exists");
+        Category dupCategory = categoryRepository.findByCategoryName(categoryDTO.getCategoryName());
+        if (dupCategory != null && !dupCategory.getCategoryId().equals(categoryId)) {
+            throw new ApiRequestException("Category with name " + categoryDTO.getCategoryName() + " already exists");
         }
-        dbCategory.setCategoryName(category.getCategoryName());
+        dbCategory.setCategoryName(categoryDTO.getCategoryName());
         categoryRepository.save(dbCategory);
         return modelMapper.map(dbCategory, CategoryDTO.class);
     }
