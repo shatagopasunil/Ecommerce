@@ -21,9 +21,8 @@ public class CategoryController {
     public ResponseEntity<CategoryResponseDTO> getCategories(
             @RequestParam(required = false, defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) Integer pageNumber,
             @RequestParam(required = false, defaultValue = AppConstants.DEFAULT_PAGE_SIZE) Integer pageSize,
-            @RequestParam(required = false, defaultValue = AppConstants.DEFAULT_SORT_BY) String sortBy,
-            @RequestParam(required = false, defaultValue = AppConstants.DEFAULT_SORT_ORDER) String sortOrder
-    ) {
+            @RequestParam(required = false, defaultValue = AppConstants.DEFAULT_CATEGORY_SORT_BY) String sortBy,
+            @RequestParam(required = false, defaultValue = AppConstants.DEFAULT_SORT_ORDER) String sortOrder) {
         return ResponseEntity.ok(categoryService.getCategories(pageNumber, pageSize, sortBy, sortOrder));
     }
 
@@ -33,7 +32,8 @@ public class CategoryController {
     }
 
     @PutMapping("/admin/categories/{categoryId}")
-    public ResponseEntity<CategoryDTO> updateCategory(@PathVariable Long categoryId, @Valid @RequestBody CategoryDTO categoryDTO) {
+    public ResponseEntity<CategoryDTO> updateCategory(@PathVariable Long categoryId,
+            @Valid @RequestBody CategoryDTO categoryDTO) {
         return ResponseEntity.ok(categoryService.updateCategory(categoryId, categoryDTO));
     }
 

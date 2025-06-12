@@ -24,14 +24,13 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryResponseDTO getCategories(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
-        Sort sort = sortOrder.equalsIgnoreCase("asc")
-                ? Sort.by(sortBy).ascending()
-                : Sort.by(sortBy).descending();
+        Sort sort = sortOrder.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
         Page<Category> categoryPage = categoryRepository.findAll(pageable);
-        List<Category> categories = categoryPage.getContent();
-        List<CategoryDTO> categoryDTOList = categories.stream().map(category -> modelMapper.map(category, CategoryDTO.class)).toList();
-        return new CategoryResponseDTO(categoryDTOList, categoryPage.getNumber(), categoryPage.getSize(), categoryPage.getTotalPages(), categoryPage.getTotalElements(), categoryPage.isLast());
+        List<CategoryDTO> categoryDTOList = categoryPage.getContent().stream()
+                .map(category -> modelMapper.map(category, CategoryDTO.class)).toList();
+        return new CategoryResponseDTO(categoryDTOList, categoryPage.getNumber(), categoryPage.getSize(),
+                categoryPage.getTotalPages(), categoryPage.getTotalElements(), categoryPage.isLast());
     }
 
     @Override
@@ -46,10 +45,11 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryDTO deleteCategory(Long categoryId) {
-        Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new ApiRequestException("Category with id " + categoryId + " not found"));
-        categoryRepository.delete(category);
-        return modelMapper.map(category, CategoryDTO.class);
+    public void deleteCategory(Long categoryId) {
+        if (!categoryRepository.existsById(categoryId)) {
+            throw new ApiRequestException("Category with id " + categoryId + " does not exist");
+        }
+        categoryRepository.deleteById(categoryId);
     }
 
     @Override
@@ -61,7 +61,7 @@ public class CategoryServiceImpl implements CategoryService {
             throw new ApiRequestException("Category with name " + categoryDTO.getCategoryName() + " already exists");
         }
         dbCategory.setCategoryName(categoryDTO.getCategoryName());
-        categoryRepository.save(dbCategory);
-        return modelMapper.map(dbCategory, CategoryDTO.class);
+        Category savedCategory = categoryRepository.save(dbCategory);
+        return modelMapper.map(savedCategory, CategoryDTO.class);
     }
 }
