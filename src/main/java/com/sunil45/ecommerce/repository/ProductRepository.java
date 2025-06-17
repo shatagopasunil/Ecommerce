@@ -1,6 +1,5 @@
 package com.sunil45.ecommerce.repository;
 
-import com.sunil45.ecommerce.model.Category;
 import com.sunil45.ecommerce.model.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
