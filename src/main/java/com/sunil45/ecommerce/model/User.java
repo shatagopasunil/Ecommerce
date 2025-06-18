@@ -25,7 +25,7 @@ public class User {
     private Long userId;
 
     @NotBlank
-    @Size(max = 20)
+    @Size(min = 3, max = 20)
     @Column(name = "username", nullable = false, unique = true)
     private String userName;
 
@@ -36,7 +36,7 @@ public class User {
     private String email;
 
     @NotBlank
-    @Size(max = 120)
+    @Size(min=6, max = 120)
     @Column(nullable = false)
     private String password;
 

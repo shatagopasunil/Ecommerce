@@ -20,13 +20,13 @@ public class AppExceptionHandler {
     }
 
     @ExceptionHandler(ApiRequestException.class)
-    public ResponseEntity<ApiResponseException> handleApiRequestException(ApiRequestException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponseException(e.getMessage()));
+    public ResponseEntity<ApiResponse> handleApiRequestException(ApiRequestException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(e.getMessage()));
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ApiResponseException> handleResourceNotFoundException(ResourceNotFoundException e) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponseException(e.getMessage()));
+    public ResponseEntity<ApiResponse> handleResourceNotFoundException(ResourceNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage()));
     }
 
 }
