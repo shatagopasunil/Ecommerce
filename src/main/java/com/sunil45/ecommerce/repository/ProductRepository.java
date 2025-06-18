@@ -8,9 +8,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
-    Page<Product> findByCategory_CategoryId(Long categoryId, Pageable pageable);
+    Page<Product> findByCategory_CategoryId(Long id, Pageable pageable);
 
-    Page<Product> findByProductNameContainingIgnoreCase(String keyword, Pageable pageable);
+    Page<Product> findByCategoryNameContainingIgnoreCase(String keyword, Pageable pageable);
 
-    boolean existsByProductNameAndCategory_CategoryId(String productName, Long categoryId);
+    boolean existsByCategoryNameAndCategory_CategoryId(String productName, Long categoryId);
 }

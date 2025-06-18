@@ -1,5 +1,6 @@
-package com.sunil45.ecommerce.service;
+package com.sunil45.ecommerce.service.impl;
 
+import com.sunil45.ecommerce.dto.PageDetailsDTO;
 import com.sunil45.ecommerce.dto.ProductDTO;
 import com.sunil45.ecommerce.dto.ProductResponseDTO;
 import com.sunil45.ecommerce.exceptions.ApiRequestException;
@@ -7,6 +8,7 @@ import com.sunil45.ecommerce.model.Category;
 import com.sunil45.ecommerce.model.Product;
 import com.sunil45.ecommerce.repository.CategoryRepository;
 import com.sunil45.ecommerce.repository.ProductRepository;
+import com.sunil45.ecommerce.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -36,8 +38,8 @@ public class ProductServiceImpl implements ProductService {
     public ProductDTO addProduct(Long categoryId, ProductDTO productDTO) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ApiRequestException("Category with id " + categoryId + " does not exist"));
-        boolean productExists = productRepository.existsByProductNameAndCategory_CategoryId(productDTO.getProductName(),
-                categoryId);
+        boolean productExists = productRepository.existsByCategoryNameAndCategory_CategoryId(
+                productDTO.getProductName(), categoryId);
         if (productExists) {
             throw new ApiRequestException(
                     "Product with name '" + productDTO.getProductName() + "' already exists in this category");
@@ -53,8 +55,9 @@ public class ProductServiceImpl implements ProductService {
         Page<Product> productsPage = productRepository.findAll(pageable);
         List<ProductDTO> productDTOList = productsPage.getContent().stream()
                 .map(product -> modelMapper.map(product, ProductDTO.class)).toList();
-        return new ProductResponseDTO(productDTOList, productsPage.getNumber(), productsPage.getSize(),
+        PageDetailsDTO pageDetailsDTO = new PageDetailsDTO(productsPage.getNumber(), productsPage.getSize(),
                 productsPage.getTotalPages(), productsPage.getTotalElements(), productsPage.isLast());
+        return new ProductResponseDTO(productDTOList, pageDetailsDTO);
     }
 
     @Override
@@ -67,19 +70,21 @@ public class ProductServiceImpl implements ProductService {
         }
         List<ProductDTO> productDTOList = productsPage.getContent().stream()
                 .map(product -> modelMapper.map(product, ProductDTO.class)).toList();
-        return new ProductResponseDTO(productDTOList, productsPage.getNumber(), productsPage.getSize(),
+        PageDetailsDTO pageDetailsDTO = new PageDetailsDTO(productsPage.getNumber(), productsPage.getSize(),
                 productsPage.getTotalPages(), productsPage.getTotalElements(), productsPage.isLast());
+        return new ProductResponseDTO(productDTOList, pageDetailsDTO);
     }
 
     @Override
     public ProductResponseDTO getProductsByKeyword(String keyword, Integer pageNumber, Integer pageSize, String sortBy,
             String sortOrder) {
         Pageable pageable = createPageable(pageNumber, pageSize, sortBy, sortOrder);
-        Page<Product> productsPage = productRepository.findByProductNameContainingIgnoreCase(keyword, pageable);
+        Page<Product> productsPage = productRepository.findByCategoryNameContainingIgnoreCase(keyword, pageable);
         List<ProductDTO> productDTOList = productsPage.getContent().stream()
                 .map(product -> modelMapper.map(product, ProductDTO.class)).toList();
-        return new ProductResponseDTO(productDTOList, productsPage.getNumber(), productsPage.getSize(),
+        PageDetailsDTO pageDetailsDTO = new PageDetailsDTO(productsPage.getNumber(), productsPage.getSize(),
                 productsPage.getTotalPages(), productsPage.getTotalElements(), productsPage.isLast());
+        return new ProductResponseDTO(productDTOList, pageDetailsDTO);
     }
 
     @Override

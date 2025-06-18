@@ -1,10 +1,12 @@
-package com.sunil45.ecommerce.service;
+package com.sunil45.ecommerce.service.impl;
 
 import com.sunil45.ecommerce.dto.CategoryDTO;
 import com.sunil45.ecommerce.dto.CategoryResponseDTO;
+import com.sunil45.ecommerce.dto.PageDetailsDTO;
 import com.sunil45.ecommerce.exceptions.ApiRequestException;
 import com.sunil45.ecommerce.model.Category;
 import com.sunil45.ecommerce.repository.CategoryRepository;
+import com.sunil45.ecommerce.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -29,8 +31,9 @@ public class CategoryServiceImpl implements CategoryService {
         Page<Category> categoryPage = categoryRepository.findAll(pageable);
         List<CategoryDTO> categoryDTOList = categoryPage.getContent().stream()
                 .map(category -> modelMapper.map(category, CategoryDTO.class)).toList();
-        return new CategoryResponseDTO(categoryDTOList, categoryPage.getNumber(), categoryPage.getSize(),
+        PageDetailsDTO pageDetailsDTO = new PageDetailsDTO(categoryPage.getNumber(), categoryPage.getSize(),
                 categoryPage.getTotalPages(), categoryPage.getTotalElements(), categoryPage.isLast());
+        return new CategoryResponseDTO(categoryDTOList, pageDetailsDTO);
     }
 
     @Override

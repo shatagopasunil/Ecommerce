@@ -19,3 +19,7 @@ This is an E-commerce fullstack application using React JS and Java Springboot.
     + category (Many to One)
 
 <hr/>
+
+**We have users entity to store user details.**
+
+    + 

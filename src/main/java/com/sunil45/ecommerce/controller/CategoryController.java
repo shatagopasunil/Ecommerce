@@ -1,6 +1,6 @@
 package com.sunil45.ecommerce.controller;
 
-import com.sunil45.ecommerce.constants.AppConstants;
+import com.sunil45.ecommerce.app.AppConstants;
 import com.sunil45.ecommerce.dto.CategoryDTO;
 import com.sunil45.ecommerce.dto.CategoryResponseDTO;
 import com.sunil45.ecommerce.service.CategoryService;
