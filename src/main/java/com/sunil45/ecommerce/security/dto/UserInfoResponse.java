@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 public class UserInfoResponse {
     private Long userId;
-    private String jwtToken;
     private String username;
     private List<String> roles;
+    private String jwtToken;
 }

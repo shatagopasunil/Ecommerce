@@ -38,7 +38,7 @@ public class ProductServiceImpl implements ProductService {
     public ProductDTO addProduct(Long categoryId, ProductDTO productDTO) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ApiRequestException("Category with id " + categoryId + " does not exist"));
-        boolean productExists = productRepository.existsByCategoryNameAndCategory_CategoryId(
+        boolean productExists = productRepository.existsByCategory_CategoryNameAndCategory_CategoryId(
                 productDTO.getProductName(), categoryId);
         if (productExists) {
             throw new ApiRequestException(
@@ -79,7 +79,7 @@ public class ProductServiceImpl implements ProductService {
     public ProductResponseDTO getProductsByKeyword(String keyword, Integer pageNumber, Integer pageSize, String sortBy,
             String sortOrder) {
         Pageable pageable = createPageable(pageNumber, pageSize, sortBy, sortOrder);
-        Page<Product> productsPage = productRepository.findByCategoryNameContainingIgnoreCase(keyword, pageable);
+        Page<Product> productsPage = productRepository.findByCategory_CategoryNameContainingIgnoreCase(keyword, pageable);
         List<ProductDTO> productDTOList = productsPage.getContent().stream()
                 .map(product -> modelMapper.map(product, ProductDTO.class)).toList();
         PageDetailsDTO pageDetailsDTO = new PageDetailsDTO(productsPage.getNumber(), productsPage.getSize(),
