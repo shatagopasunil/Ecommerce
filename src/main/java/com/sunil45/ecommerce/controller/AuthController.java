@@ -47,10 +47,7 @@ public class AuthController {
 
     @GetMapping("/username")
     public String currentUserName(Authentication authentication) {
-        if (authentication != null)
-            return authentication.getName();
-        else
-            return "";
+        return (authentication != null) ? authentication.getName() : "";
     }
 
     @GetMapping("/user")
@@ -89,7 +86,7 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
-        if (userRepository.existsByUserName(signUpRequest.getUsername())) {
+        if (userRepository.existsByUsername(signUpRequest.getUsername())) {
             return ResponseEntity.badRequest().body(new ApiResponse("Error: Username is already taken!"));
         }
 

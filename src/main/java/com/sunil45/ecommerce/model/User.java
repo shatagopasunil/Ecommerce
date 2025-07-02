@@ -4,9 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -27,7 +25,7 @@ public class User {
     @NotBlank
     @Size(min = 3, max = 20)
     @Column(name = "username", nullable = false, unique = true)
-    private String userName;
+    private String username;
 
     @NotBlank
     @Size(max = 50)
@@ -40,6 +38,7 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @EqualsAndHashCode.Exclude
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
@@ -52,8 +51,8 @@ public class User {
     @ToString.Exclude
     private Set<Product> products = new HashSet<>();
 
-    public User(String userName, String email, String password) {
-        this.userName = userName;
+    public User(String username, String email, String password) {
+        this.username = username;
         this.email = email;
         this.password = password;
     }
